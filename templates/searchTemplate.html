@@ -1,0 +1,161 @@
+<script>
+
+$(function(){
+
+ $('#all').click(function(){
+ 
+    $('#searchbox').css('width','566px');
+ 
+ });
+
+ $('#title').click(function(){
+ 
+    $('#searchbox').css('width','576px');
+ 
+ });
+ 
+ 
+ $('#author').click(function(){
+ 
+    $('#searchbox').css('width','592px');
+ 
+ });
+ 
+  $('#subject').click(function(){
+ 
+    $('#searchbox').css('width','612px');
+ 
+ });
+ 
+ $('#pubag').click(function(){
+ 
+    $('#searchbox').css('width','610px');
+ 
+ });
+
+ /* $(':not(#articleList)').click(function(){
+     
+	$('.results').slideUp(500); 
+  
+  }); */
+  
+ //Handling keyword highlighting within search dropdown  
+ 
+ $('#articles').keypress(function(){
+ 
+  var searchterm = $('#articles').val(); 
+ 
+  //var exp = new RegExp('[a-zA-Z0-9]{3,}');
+			  
+   //if(exp.test(searchterm)){ 
+   
+   if(searchterm.length > 1){
+   
+    setTimeout(function(){
+       //var searchmatch2 = document.getElementsByClassName('results')[0].innerHTML; 
+	   
+	   $("#articleList").jmHighlight(searchterm, {
+	    "filter": [
+		
+		   
+		
+		],
+		// Optional. Default is "span"
+		"element": "span",
+		// Optional. Default is "highlight"
+		"className": "customHighlight",
+		// Optional: If your search keyword is more than one word
+		// separeted with a blank, you can define this property with true
+		// if you want a separeted search for the keywords. If you define
+		// nothing the default value is false, so it will be searched
+		// for the complete term
+		"separateWordSearch": false,
+		// if diacritics should be matched too
+		"diacritics": true, // default true
+		// set "debug" to true if you want to see console logs
+		"debug": true
+      });
+		 
+	 }, 500);	
+
+    }	
+  
+  });
+
+});
+
+</script>
+
+<BR>
+
+<form id="searchbox">
+
+	<div style="float:left;border-radius: 50px 3px 3px 50px;font-size:0.9em;margin-left:1.2%;margin-top:-2px;" class="ui blue compact menu">
+	   <div style="font-weight:bold;border-radius: 50px 3px 3px 50px;color:black;" id="filter" class="ui simple dropdown item">
+		    {{ filter }}
+		  <i class="dropdown icon"></i>
+		  <div class="menu">
+			 <div class="item" id="all" data-ng-click="all()">All</div>
+			 <div class="item" id="author" data-ng-click="author()">Author</div>
+			 <div class="item" id="pubag" data-ng-click="pubag()">PubAg ID</div>
+			 <div class="item" id="subject" data-ng-click="subjects()">Subject(s)</div>
+			 <div class="item" id="title" data-ng-click="title()">Title</div>
+		  </div>
+		</div>
+     </div>
+	 
+    <input type="text" id="articles" data-ng-model="searchterm" data-ng-change="getList()" placeholder="">
+	
+    <button id="submit" class="ui green button" data-ng-click="search($scope.filterValue, $scope.searchterm)">
+	   <i class="fa fa-search"></i> Search &nbsp;
+	 </button>
+
+</form>	 
+
+  <div data-ng-show="visibility2" style="width:70%;font-family:'Lato';border:2px solid #9a9a9a;border-radius:5px;margin-top:1%;margin-left:15%;" id="articleList"> 
+	
+	<div data-ng-show="suggestionVisibility">
+	
+	 <p style="font-family:'Acme';text-align:center;"> Suggestions for {{ searchterm | uppercase }} </p>
+	
+	 <p class="suggestions" style="padding: 0% 1%;" data-ng-repeat="suggestion in suggestions | orderBy: termCount" data-ng-click="termFilterChange(suggestion)">
+		
+	  {{ suggestion.term }} &nbsp; in &nbsp; <span style="color:green;font-size:1.4em;"> {{ suggestion.field }} </span>
+	
+	 </p>
+	
+	 <hr style="width:80%;margin-left:10%;" />
+	
+	</div>
+	
+	<p class="results" style="padding: 0% 1%;" data-ng-repeat="data in articleData | filter : searchterm" data-ng-click="termChange(data)">
+    	{{ data.subjects[0] }} 
+    </p>
+	
+  </div>
+
+<!-- <hr style="width:84%;margin-left:8%;" /> -->
+
+<BR><BR> 
+ 
+  <div id="results" data-ng-show="resultSetVisibility" data-ng-repeat="result in articleData">
+	  
+	    <h3> {{ result.title }}</h3>
+		
+		<span> Subject terms: &nbsp; <span style="font-style:italic;" data-ng-repeat="subject in result.subjects"> {{ subject }} &nbsp; - &nbsp; </span></span>
+		
+		<BR><BR>
+		
+		<span style="font-weight:bold;"> Written by: &nbsp; <span data-ng-repeat="author in result.authors"> {{ author }} &nbsp; </span></span>
+		
+		<BR><BR>
+		
+		<span style="border-radius:20px;background:blue;color:white;padding:0.5%;"> Pubag: &nbsp {{ result.agid }}</span>
+		
+		<BR><BR>
+		
+		<hr />
+	  
+  </div>
+	
+<BR><BR> 
